@@ -1,6 +1,7 @@
 ﻿using CategoryServices.DTOs;
 using CategoryServices.Models;
 using CategoryServices.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,6 +37,7 @@ namespace CategoryServices.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ProductDTO>> PostProduct(ProductDTO productDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -45,6 +47,7 @@ namespace CategoryServices.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<ProductDTO>> PutProduct(int id, ProductDTO productDto)
         {
             if (id != productDto.ProductId) return BadRequest();
@@ -65,6 +68,7 @@ namespace CategoryServices.Controllers
 
 
         [HttpDelete("{id}")]
+        [Authorize(Roles ="admin,user")]
         public async Task<ActionResult<Product>> DeleteProduct(int id)
         {
             await _productRepository.DeleteProductAsync(id);
