@@ -1,5 +1,6 @@
 ﻿using CategoryServices.Models;
 using CategoryServices.Repository;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,10 +19,14 @@ namespace CategoryServices.Controllers
         }
 
         [HttpPost("login")]
-        public string Login([FromBody] LoginRequest obj)
+        public async Task<IActionResult> Login([FromBody] Models.LoginRequest obj)
         {
-           var token = _authRepository.Login(obj);
-            return token;
+            if (obj.UserName == null && obj.Password == null)
+            {
+                return Unauthorized(new { success = false, message = "Please provide Username and password" });
+            }
+            var jwtToken = _authRepository.Login(obj);
+            return Ok( new {success = true,token = jwtToken,message ="successfully logged in" });
         }
 
         [HttpPost("assignRole")]
